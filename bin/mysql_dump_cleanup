@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+require 'pathname'
+
+source_path = (Pathname.new(__FILE__).dirname + '../lib').expand_path
+$LOAD_PATH << source_path
+
+require 'mysql_dump_cleanup'
+
+if ['-v', '--version'].include? ARGV[0]
+  puts "mysql_dump_cleanup version #{MysqlDumpCleanup::VERSION}"
+  exit 0
+elsif ['-h','--help'].include? ARGV[0]
+  puts %q[
+    mysql_dump_cleanup dump_path fields_hash
+      
+      fields_hash must have one of the following formats 
+
+      "{
+        { remove_tables: [ :table_name1, :table_name2, etc ] },
+        { remove_columns: { table_name1: [:column1, :column2,  etc] } },
+        { xor_integer_columns: { table_name1: [:column1, :column2,  etc] } }
+      }"
+
+    remove_columns, remove_tables and xor_integer_columns and optional, so you may remove
+    any of this options
+
+    note, that you has to provide symbols in hash.
+
+]
+
+  exit 0
+end
+
+MysqlDumpCleanup::Runner.new.start
